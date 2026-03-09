@@ -1,8 +1,5 @@
 # ADK Skill Impl
 
-Standalone extraction of the ADK agent implementations from the larger
-`langgraph_vs_adk` repo.
-
 This repo currently contains two main execution styles:
 
 - `skill_impl/`
