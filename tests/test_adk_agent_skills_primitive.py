@@ -9,6 +9,7 @@ from adk_agent import adk_fix
 from adk_agent.agents.multi_agent.math_agent import build_math_agent
 from adk_agent.agents.unified_agent import build_unified_agent
 from adk_agent_skills_primitive.agents.orchestrator.builder import build_root_agent
+from adk_agent_skills_primitive.native_skills import build_native_skill_toolset
 from adk_agent_skills_primitive.native_skills import load_native_skills
 from adk_agent_skills_primitive.toolsets import SkillScopedRuntimeToolset
 from core.utils.litellm_config import LiteLLMConfig
@@ -59,9 +60,31 @@ def test_runtime_toolset_only_exposes_tools_for_active_skill():
     toolset = SkillScopedRuntimeToolset(DummySearchClient())
 
     no_skill_tools = asyncio.run(toolset.get_tools(SimpleNamespace(state={})))
-    math_tools = asyncio.run(toolset.get_tools(SimpleNamespace(state={"active_skill": "math"})))
+    math_tools = asyncio.run(
+        toolset.get_tools(
+            SimpleNamespace(
+                state={
+                    "active_skill": "math",
+                    "active_allowed_tool_names": [
+                        "add",
+                        "subtract",
+                        "multiply",
+                        "divide",
+                        "format_math_response",
+                    ],
+                }
+            )
+        )
+    )
     web_tools = asyncio.run(
-        toolset.get_tools(SimpleNamespace(state={"active_skill": "web-search"}))
+        toolset.get_tools(
+            SimpleNamespace(
+                state={
+                    "active_skill": "web-search",
+                    "active_allowed_tool_names": ["web_search"],
+                }
+            )
+        )
     )
 
     assert no_skill_tools == []
@@ -70,10 +93,66 @@ def test_runtime_toolset_only_exposes_tools_for_active_skill():
         "subtract",
         "multiply",
         "divide",
-        "solve_differential_equation",
         "format_math_response",
     ]
     assert [tool.name for tool in web_tools] == ["web_search"]
+
+
+def test_loading_math_skill_initializes_default_allowed_tools():
+    toolset = build_native_skill_toolset()
+    load_skill = toolset._tools[1]
+    tool_context = SimpleNamespace(state={})
+
+    result = asyncio.run(load_skill.run_async(args={"name": "math"}, tool_context=tool_context))
+
+    assert "error" not in result
+    assert tool_context.state["active_skill"] == "math"
+    assert tool_context.state["active_allowed_tool_names"] == [
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "format_math_response",
+    ]
+
+
+def test_loading_math_reference_unlocks_differential_equation_tool():
+    toolset = build_native_skill_toolset()
+    load_skill = toolset._tools[1]
+    load_resource = toolset._tools[2]
+    tool_context = SimpleNamespace(state={})
+    runtime_toolset = SkillScopedRuntimeToolset(DummySearchClient())
+
+    asyncio.run(load_skill.run_async(args={"name": "math"}, tool_context=tool_context))
+    before_tools = asyncio.run(runtime_toolset.get_tools(SimpleNamespace(state=tool_context.state)))
+
+    result = asyncio.run(
+        load_resource.run_async(
+            args={
+                "skill_name": "math",
+                "path": "references/differential-equations.md",
+            },
+            tool_context=tool_context,
+        )
+    )
+    after_tools = asyncio.run(runtime_toolset.get_tools(SimpleNamespace(state=tool_context.state)))
+
+    assert "error" not in result
+    assert [tool.name for tool in before_tools] == [
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "format_math_response",
+    ]
+    assert [tool.name for tool in after_tools] == [
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "solve_differential_equation",
+        "format_math_response",
+    ]
 
 
 def test_non_skill_math_agent_exposes_solver_and_formatter_tools():

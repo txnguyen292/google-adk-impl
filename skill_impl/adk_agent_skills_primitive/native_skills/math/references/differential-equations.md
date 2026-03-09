@@ -1,3 +1,7 @@
+---
+allowed-tools: solve_differential_equation
+---
+
 # Differential Equations
 
 Use the differential-equation tool when the user asks to solve a supported first-order ODE rather than perform plain arithmetic.
@@ -13,10 +17,10 @@ Use the differential-equation tool when the user asks to solve a supported first
 
 1. Rewrite the user problem into a supported equation form.
 2. Call `solve_differential_equation`.
-3. Consult `references/formatting.md`.
+3. Follow the formatting rules from the loaded math skill instructions.
 4. Call `format_math_response` with the original equation and the full solver result dictionary.
 5. Prefer the returned `pretty_equation` or `final_answer` so the final response is displayed in symbolic math form rather than flattened calculator text.
-4. Return the formatted solution clearly.
+6. Return the formatted solution clearly.
 
 ## Limits
 
