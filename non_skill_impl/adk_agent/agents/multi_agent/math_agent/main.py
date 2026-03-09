@@ -6,8 +6,10 @@ import typer
 from loguru import logger
 from rich.console import Console
 
+from core.utils.adk_config import get_env_flag
 from core.utils.dotenv import load_dotenv
 from adk_agent.agents.multi_agent.math_agent.agent import app as adk_app
+from adk_agent.utils.runner_utils import collect_final_response
 
 console = Console()
 app = typer.Typer(add_completion=False)
@@ -19,7 +21,6 @@ async def _run_local(message: str) -> str:
     from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService
     from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
     from google.adk.sessions.in_memory_session_service import InMemorySessionService
-    from google.genai import types
     from core.utils.adk_config import get_max_llm_calls
 
     session_service = InMemorySessionService()
@@ -38,21 +39,19 @@ async def _run_local(message: str) -> str:
         memory_service=InMemoryMemoryService(),
     )
     run_config = RunConfig(max_llm_calls=get_max_llm_calls())
-    content = types.Content(role="user", parts=[types.Part(text=message)])
-    final_text = "No response."
     try:
-        async for event in runner.run_async(
+        return await collect_final_response(
+            runner=runner,
             user_id=user_id,
             session_id=session_id,
-            new_message=content,
+            message=message,
             run_config=run_config,
-        ):
-            if event.is_final_response():
-                final_text = event.content.parts[0].text
-                break
+            final_author=adk_app.name,
+            debug=get_env_flag("ADK_DEBUG", default=False),
+            trace=get_env_flag("ADK_TRACE", default=True),
+        )
     finally:
         await runner.close()
-    return final_text
 
 
 def _read_message(message: str | None) -> str:

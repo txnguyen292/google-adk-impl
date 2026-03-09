@@ -13,6 +13,7 @@ class _FakeEvent:
         author: str = "orchestrator",
         is_final: bool = False,
         text: str = "",
+        calls: list[object] | None = None,
         responses: list[object] | None = None,
     ) -> None:
         self.author = author
@@ -20,10 +21,11 @@ class _FakeEvent:
         self.invocation_id = "inv"
         self.content = SimpleNamespace(parts=[SimpleNamespace(text=text)])
         self._is_final = is_final
+        self._calls = calls or []
         self._responses = responses or []
 
     def get_function_calls(self):
-        return []
+        return self._calls
 
     def get_function_responses(self):
         return self._responses
@@ -71,3 +73,32 @@ def test_collect_final_response_prefers_format_math_response_final_answer():
     )
 
     assert final_text == format_response.response["final_answer"]
+
+
+def test_collect_final_response_trace_prints_steps(capsys):
+    call = SimpleNamespace(name="web_search")
+    response = SimpleNamespace(name="web_search", response={"answer_text": "result"})
+    runner = _FakeRunner(
+        [
+            _FakeEvent(author="orchestrator", calls=[call], responses=[response], text="Working"),
+            _FakeEvent(author="orchestrator", is_final=True, text="Final answer"),
+        ]
+    )
+
+    final_text = asyncio.run(
+        collect_final_response(
+            runner=runner,
+            user_id="u",
+            session_id="s",
+            message="search this",
+            run_config=object(),
+            final_author="orchestrator",
+            trace=True,
+        )
+    )
+
+    captured = capsys.readouterr()
+    assert "[adk:orchestrator] function_calls: web_search" in captured.out
+    assert "[adk:orchestrator] function_responses: web_search" in captured.out
+    assert "[adk:orchestrator] text: Working" in captured.out
+    assert final_text == "Final answer"

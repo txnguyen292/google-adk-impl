@@ -6,6 +6,7 @@ import typer
 from loguru import logger
 from rich.console import Console
 
+from core.utils.adk_config import get_env_flag
 from core.utils.dotenv import load_dotenv
 from adk_agent.agents.unified_agent.agent import app as adk_app
 from adk_agent.utils.runner_utils import collect_final_response
@@ -43,6 +44,8 @@ async def _run_local(message: str) -> str:
         message=message,
         run_config=run_config,
         final_author=adk_app.name,
+        trace=get_env_flag("ADK_TRACE", default=True),
+        debug=get_env_flag("ADK_DEBUG", default=False),
     )
 
 

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import os
 
 import typer
 from loguru import logger
 from rich.console import Console
 
+from core.utils.adk_config import get_env_flag
 from core.utils.dotenv import load_dotenv
 from adk_agent.agents.multi_agent.orchestrator.agent import app as adk_app
 from adk_agent.utils.runner_utils import collect_final_response
@@ -39,7 +39,8 @@ async def _run_local(message: str) -> str:
         memory_service=InMemoryMemoryService(),
     )
     run_config = RunConfig(max_llm_calls=get_max_llm_calls())
-    debug = os.getenv("ADK_DEBUG", "").strip().lower() in {"1", "true", "yes", "y"}
+    debug = get_env_flag("ADK_DEBUG", default=False)
+    trace = get_env_flag("ADK_TRACE", default=True)
     try:
         return await collect_final_response(
             runner=runner,
@@ -49,6 +50,7 @@ async def _run_local(message: str) -> str:
             run_config=run_config,
             final_author=adk_app.name,
             debug=debug,
+            trace=trace,
         )
     finally:
         await runner.close()

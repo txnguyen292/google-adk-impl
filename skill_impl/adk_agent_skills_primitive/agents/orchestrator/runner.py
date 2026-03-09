@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import os
-
 from adk_agent.utils.runner_utils import collect_final_response
+from core.utils.adk_config import get_env_flag
 from core.utils.litellm_config import LiteLLMConfig
 from adk_agent.skills.web_search.tools.web_search import DuckDuckGoSearchClient, WebSearchClient
 
@@ -65,7 +64,8 @@ async def run_adk_skills_primitive_orchestrator(
         memory_service=InMemoryMemoryService(),
     )
     run_config = RunConfig(max_llm_calls=get_max_llm_calls())
-    debug = os.getenv("ADK_DEBUG", "").strip().lower() in {"1", "true", "yes", "y"}
+    debug = get_env_flag("ADK_DEBUG", default=False)
+    trace = get_env_flag("ADK_TRACE", default=False)
     try:
         final_text = await collect_final_response(
             runner=runner,
@@ -75,6 +75,7 @@ async def run_adk_skills_primitive_orchestrator(
             run_config=run_config,
             final_author="orchestrator",
             debug=debug,
+            trace=trace,
         )
     finally:
         await runner.close()

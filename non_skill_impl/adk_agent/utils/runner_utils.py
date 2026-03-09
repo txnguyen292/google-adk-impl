@@ -18,8 +18,11 @@ async def collect_final_response(
     from google.genai import types
     from core.utils.math_render import render_math_for_terminal
 
+    log_event = None
     if debug:
-        from core.utils.observability import log_event
+        from core.utils.observability import log_event as _log_event
+
+        log_event = _log_event
 
     content = types.Content(role="user", parts=[types.Part(text=message)])
     final_text = "No response."
@@ -31,21 +34,22 @@ async def collect_final_response(
         new_message=content,
         run_config=run_config,
     ):
-        if debug:
+        if debug or trace:
             try:
                 calls = event.get_function_calls()
                 responses = event.get_function_responses()
-                log_event(
-                    "adk",
-                    session_id,
-                    "adk_event",
-                    author=event.author,
-                    invocation_id=event.invocation_id,
-                    is_final=event.is_final_response(),
-                    partial=event.partial,
-                    function_calls=[c.name for c in calls],
-                    function_responses=[r.name for r in responses],
-                )
+                if log_event:
+                    log_event(
+                        "adk",
+                        session_id,
+                        "adk_event",
+                        author=event.author,
+                        invocation_id=event.invocation_id,
+                        is_final=event.is_final_response(),
+                        partial=event.partial,
+                        function_calls=[c.name for c in calls],
+                        function_responses=[r.name for r in responses],
+                    )
                 if trace:
                     author = event.author or "unknown"
                     if calls:

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import os
 
 import typer
 from loguru import logger
 from rich.console import Console
 
+from core.utils.adk_config import get_env_flag
 from core.utils.dotenv import load_dotenv
 from adk_agent_skills_primitive.agents.orchestrator.agent import (
     app as adk_primitive_app,
@@ -42,8 +42,8 @@ async def _run_local(message: str) -> str:
     )
     max_llm_calls = get_max_llm_calls()
     run_config = RunConfig(max_llm_calls=max_llm_calls)
-    debug = os.getenv("ADK_DEBUG", "").strip().lower() in {"1", "true", "yes", "y"}
-    trace = os.getenv("ADK_TRACE", "").strip().lower() in {"1", "true", "yes", "y"}
+    debug = get_env_flag("ADK_DEBUG", default=False)
+    trace = get_env_flag("ADK_TRACE", default=True)
     logger.info("ADK primitive local run config: max_llm_calls={}", max_llm_calls)
     try:
         return await collect_final_response(
@@ -53,7 +53,7 @@ async def _run_local(message: str) -> str:
             message=message,
             run_config=run_config,
             final_author=adk_primitive_app.name,
-            debug=debug or trace,
+            debug=debug,
             trace=trace,
         )
     finally:
