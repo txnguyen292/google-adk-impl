@@ -28,7 +28,13 @@ From the repo root:
 ```bash
 uv sync --extra dev
 source .venv/bin/activate
+cp .env.temp .env
 ```
+
+Then open `.env` and fill in the required values, especially:
+
+- `OPENAI_API_KEY` or the provider key required by your `LITELLM_MODEL`
+- `BRAVE_API_KEY` if you want web-search-capable agents to work
 
 If you already have the checked-in virtualenv, you can use it directly:
 
@@ -39,6 +45,12 @@ If you already have the checked-in virtualenv, you can use it directly:
 ## Environment Variables
 
 The repo loads `.env` automatically for the local CLIs.
+
+Start from the template:
+
+```bash
+cp .env.temp .env
+```
 
 Minimum useful setup:
 
