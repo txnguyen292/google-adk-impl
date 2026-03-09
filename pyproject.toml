@@ -1,0 +1,49 @@
+[project]
+name = "adk-skill-impl"
+version = "0.1.0"
+description = "Standalone extraction of the ADK native skills implementation."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.119.0",
+    "uvicorn>=0.27.0",
+    "typer>=0.12.5",
+    "rich>=13.9.2",
+    "loguru>=0.7.2",
+    "google-adk[eval]>=1.26.0",
+    "google-adk>=1.26.0",
+    "pydantic>=2.10.0",
+    "litellm>=1.81.0",
+    "sympy>=1.13.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.14.14",
+]
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = [
+    "main",
+    "sitecustomize",
+]
+
+[tool.setuptools.packages.find]
+where = [".", "skill_impl", "non_skill_impl"]
+include = [
+    "core*",
+    "adk_agent*",
+    "adk_agent_skills_primitive*",
+]
+
+[tool.setuptools.package-data]
+adk_agent = ["skills/**/*.md"]
+adk_agent_skills_primitive = ["native_skills/**/*.md"]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "skill_impl", "non_skill_impl"]
