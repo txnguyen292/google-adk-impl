@@ -1,0 +1,185 @@
+{
+  "eval_set_id": "initial_tests",
+  "name": "initial_tests",
+  "eval_cases": [
+    {
+      "eval_id": "simple_scope_test",
+      "conversation": [
+        {
+          "invocation_id": "e-dc452501-c77e-4b7a-9115-6723a718b313",
+          "user_content": {
+            "parts": [
+              {
+                "text": "what can you do?"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I can help with only two things:\n\n1) **Math (basic arithmetic)**  \n   - Add, subtract, multiply, and divide numbers  \n   - Example: “Compute (125.5 * 3) / 7”\n\n2) **Web lookup (current information)**  \n   - Search the web for up-to-date info like news, weather, facts, links, etc., and summarize it with sources  \n   - Example: “What’s the weather in Chicago today?” or “Latest news about NVIDIA”\n\nTell me what you want—**a calculation** or **something to look up online**."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {},
+          "creation_timestamp": 1769370590.121572
+        },
+        {
+          "invocation_id": "e-9e02a5be-fe28-4a94-9030-37122124fd45",
+          "user_content": {
+            "parts": [
+              {
+                "text": "what's the weather like in Atlanta right now?"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I can do **only two kinds of tasks** per the system instructions:\n\n- **Math**: basic arithmetic (add/subtract/multiply/divide) via the math agent.\n- **Web lookup**: fetch current info (like weather/news) via the web search agent, with citations when available.\n\nFor your weather question, I already attempted a web lookup, but the tool returned **no results**, so I can’t provide Atlanta’s current conditions right now.\n\nIf you share either:\n- an **Atlanta ZIP code** (e.g., 30303), or\n- a **preferred source** (e.g., weather.gov / NWS),\n\nI can run another web lookup using that narrower query."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "invocation_events": [
+              {
+                "author": "orchestrator",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_LI0gRncKLuoFXdbNuslrdAk0",
+                        "args": {
+                          "request": "current weather in Atlanta right now (temperature, conditions, precipitation, wind)"
+                        },
+                        "name": "web_search_agent"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                }
+              },
+              {
+                "author": "orchestrator",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_LI0gRncKLuoFXdbNuslrdAk0",
+                        "name": "web_search_agent",
+                        "response": {
+                          "result": "I couldn’t retrieve the current weather for Atlanta because the web search tool returned **no results** for the query (“current weather Atlanta GA right now temperature conditions precipitation wind”), so I don’t have live values for **temperature, conditions, precipitation, or wind** right now.\n\nIf you want, tell me a specific source to use (e.g., National Weather Service station, Weather.gov, or a ZIP code like 30303), and I can try again with a narrower query."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                }
+              }
+            ]
+          },
+          "creation_timestamp": 1769370608.032387
+        }
+      ],
+      "session_input": {
+        "app_name": "orchestrator",
+        "user_id": "user"
+      },
+      "creation_timestamp": 1769371227.8300061
+    },
+    {
+      "eval_id": "math_test_1",
+      "conversation": [
+        {
+          "invocation_id": "e-3770ff1f-f503-4d97-9e51-966fa1957b9d",
+          "user_content": {
+            "parts": [
+              {
+                "text": "what can you do?"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I can only help with two things:\n\n1) **Math (via a calculator tool)**  \n- Do arithmetic and numeric calculations (add/subtract/multiply/divide), including multi-step ones if you give the steps or expression.\n\n2) **Web lookup (via a web search tool)**  \n- Look up **current information** like news, weather, prices, public facts, etc., and summarize it (with citations when available).\n\nIf you tell me what you need—either a calculation or something to look up online—I’ll route it to the right tool."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {},
+          "creation_timestamp": 1772721790.419485
+        },
+        {
+          "invocation_id": "e-1f22fa28-dfb3-4965-a1aa-757f45cf75d3",
+          "user_content": {
+            "parts": [
+              {
+                "text": "what is 3*4+(8-2)?"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "1) \\(3 \\times 4 = 12\\)  \n2) \\(8 - 2 = 6\\)  \n3) \\(12 + 6 = 18\\)\n\n**Answer: 18**"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "invocation_events": [
+              {
+                "author": "orchestrator",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_luumXPGhjfBqyngu4kyC7L2U",
+                        "args": {
+                          "request": "Compute 3*4+(8-2) using allowed operations."
+                        },
+                        "name": "math_agent"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                }
+              },
+              {
+                "author": "orchestrator",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_luumXPGhjfBqyngu4kyC7L2U",
+                        "name": "math_agent",
+                        "response": {
+                          "result": "Using allowed operations:\n\n1) Multiply: \\(3 \\times 4 = 12\\)  \n2) Subtract: \\(8 - 2 = 6\\)  \n3) Add: \\(12 + 6 = 18\\)\n\n**Result: 18**\n\nmath agent complete"
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                }
+              }
+            ]
+          },
+          "creation_timestamp": 1772721952.962618
+        }
+      ],
+      "session_input": {
+        "app_name": "orchestrator",
+        "user_id": "user"
+      },
+      "creation_timestamp": 1772721991.9155982
+    }
+  ],
+  "creation_timestamp": 1769371212.545648
+}

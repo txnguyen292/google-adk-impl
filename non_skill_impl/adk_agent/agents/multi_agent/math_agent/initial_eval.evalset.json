@@ -1,0 +1,76 @@
+{
+  "eval_set_id": "initial_eval",
+  "name": "initial_eval",
+  "eval_cases": [
+    {
+      "eval_id": "pemdas_test_1",
+      "conversation": [
+        {
+          "invocation_id": "e-c238a400-a7d1-4111-9371-9985371210e1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "what is 1+2*2-4?"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "Compute multiplication first: \\(2 \\times 2 = 4\\).  \nThen add: \\(1 + 4 = 5\\).  \nThen subtract: \\(5 - 4 = 1\\).\n\n**Answer: 1**"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "invocation_events": [
+              {
+                "author": "math_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_ovre7h9U7BIyaMp8u7e3fu0p",
+                        "args": {
+                          "a": 5,
+                          "b": 4
+                        },
+                        "name": "subtract"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                }
+              },
+              {
+                "author": "math_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_ovre7h9U7BIyaMp8u7e3fu0p",
+                        "name": "subtract",
+                        "response": {
+                          "result": 1
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                }
+              }
+            ]
+          },
+          "creation_timestamp": 1769298612.696417
+        }
+      ],
+      "session_input": {
+        "app_name": "math_agent",
+        "user_id": "user"
+      },
+      "creation_timestamp": 1769298666.892333
+    }
+  ],
+  "creation_timestamp": 1769298652.956589
+}

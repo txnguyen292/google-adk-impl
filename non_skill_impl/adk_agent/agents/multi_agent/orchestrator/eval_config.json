@@ -1,0 +1,52 @@
+{
+  "criteria": {
+    "rubric_based_final_response_quality_v1": {
+      "threshold": 0.8,
+      "rubrics": [
+        {
+          "rubric_id": "scope_only_math_web",
+          "rubric_content": {
+            "text_property": "If the user asks about capabilities or scope, the response must mention only math and web search. Do not claim unrelated abilities."
+          }
+        },
+        {
+          "rubric_id": "weather_response_quality",
+          "rubric_content": {
+            "text_property": "If the user asks about current weather, the response should reflect the web search result or clearly state inability to retrieve it."
+          }
+        },
+        {
+          "rubric_id": "citations_when_web_used",
+          "rubric_content": {
+            "text_property": "If web_search_agent is used, the final response should include citations or sources."
+          }
+        }
+      ],
+      "judge_model_options": {
+        "judge_model": "openai/gpt-4o-mini",
+        "num_samples": 1
+      }
+    },
+    "rubric_based_tool_use_quality_v1": {
+      "threshold": 0.8,
+      "rubrics": [
+        {
+          "rubric_id": "weather_requires_web_search",
+          "rubric_content": {
+            "text_property": "If the user asks about current weather, web_search_agent must be called."
+          }
+        },
+        {
+          "rubric_id": "scope_avoids_tools",
+          "rubric_content": {
+            "text_property": "If the user asks only about capabilities or scope, no tools should be called."
+          }
+        }
+      ],
+      "judge_model_options": {
+        "judge_model": "openai/gpt-4o-mini",
+        "num_samples": 1
+      }
+    }
+  }
+}
