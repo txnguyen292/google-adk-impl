@@ -64,7 +64,7 @@ ADK_MAX_LLM_CALLS=0
 LITELLM_PROVIDER=openai
 LITELLM_TEMPERATURE=0.2
 LITELLM_DROP_PARAMS=false
-LITELLM_SSL_VERIFY=false
+LITELLM_SSL_VERIFY=true
 BRAVE_SEARCH_COUNTRY=us
 BRAVE_SEARCH_LANG=en
 BRAVE_VERIFY=true
@@ -84,6 +84,8 @@ Notes:
 - `ADK_MAX_LLM_CALLS` now defaults to `0` in this repo.
 - Local agent CLIs print execution steps by default.
   Set `ADK_TRACE=false` if you want quieter output.
+- Keep `LITELLM_SSL_VERIFY=true` unless you are using a temporary local-only
+  workaround for certificate issues in a controlled development environment.
 
 ## Repository Layout
 
