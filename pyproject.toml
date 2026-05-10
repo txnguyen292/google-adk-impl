@@ -11,7 +11,7 @@ dependencies = [
     "rich>=13.9.2",
     "loguru>=0.7.2",
     "google-adk[eval]>=1.26.0",
-    "google-adk>=1.26.0",
+    "google-adk>=1.28.1",
     "pydantic>=2.10.0",
     "litellm>=1.81.0",
     "sympy>=1.13.3",
@@ -19,7 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=9.0.2",
+    "pytest>=9.0.3",
     "ruff>=0.14.14",
 ]
 
